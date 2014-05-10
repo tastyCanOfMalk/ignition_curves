@@ -1,7 +1,7 @@
 if (require("grid") == FALSE) install.packages("grid")
 if (require("ggplot2") == FALSE) install.packages("ggplot2")
 if (require("gridExtra") == FALSE) install.packages("gridExtra")
-
+ 
 #### Variable Data // number of runs, filename prefix, working directory ####
 numruns <- 3
 prefix <- "2014-01-31,105A"
