@@ -6,7 +6,15 @@ if (require("gridExtra") == FALSE) install.packages("gridExtra")
 numruns <- 3
 prefix <- "2014-01-31,105A"
 setwd("C://Users//e//Documents//R")
+export_to_png <- TRUE
 ####
+
+# Width & height of exported .png file
+pngw <- 600
+pngh <- 600
+# filename of exported .png file
+fname <- prefix
+
 options("digits.secs"=6, digits=6)
 
 ### Important function variables
@@ -230,4 +238,14 @@ do.call("grid.arrange", all_graphs)
 grid.draw(textGrob(test_date, x=0.99, y=0.01, hjust=1, vjust=0.1))
 
 
+if (export_to_png == TRUE){
+#### Code to export plotted data to .png file
+png(filename=paste0(fname,".png"), width = pngw, height = pngh)
+pyro_graphs_list <- Map(func_make_graph, mget(ign_names), ign_names)
+all_data_list_grob <- lapply(list(all_data), tableGrob)
+all_graphs <- c(pyro_graphs_list, all_data_list_grob)
+do.call("grid.arrange", all_graphs)
+grid.draw(textGrob(test_date, x=0.99, y=0.01, hjust=1, vjust=0.1))
+dev.off()
+}
 
