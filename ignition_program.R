@@ -1,12 +1,12 @@
 if (require("grid") == FALSE) install.packages("grid")
 if (require("ggplot2") == FALSE) install.packages("ggplot2")
 if (require("gridExtra") == FALSE) install.packages("gridExtra")
- 
+
 #### Variable Data // number of runs, filename prefix, working directory ####
 numruns <- 3
 prefix <- "2014-01-31,105A"
-setwd("C://Users//e//Documents//R")
-export_to_png <- TRUE
+setwd("F://gitHub//ignition_curves//test_data")
+export_to_png <- FALSE
 ####
 
 # Width & height of exported .png file
@@ -229,6 +229,22 @@ print_data <- function(){
 all_data <- print_data()
 
 #### For plotting data
+
+func_make_graph <- function (x, y=deparse(substitute(x))){
+        time <- as.numeric(time_diff)
+        dfp <- data.frame(time, x)
+        ggplot (data=dfp, aes(time, x)) +
+                ggtitle(y) +
+                geom_point(alpha=1/4) +
+                geom_point(x=func_drop_time_coord(x)[1], y=func_drop_time_coord(x)[2], size=4, color="blue", alpha=1/200) +
+                geom_point(x=func_baseline_two_coord(x)[1], y=func_baseline_two_coord(x)[2], size=4, color="blue", alpha=1/200) +
+                geom_hline(aes(yintercept=func_drop_time_coord(x)[2]),linetype="dashed", alpha=1/4, color="blue") +
+                geom_point(x=func_ign_time_coord(x)[1], y=func_ign_time_coord(x)[2], size=4, color="red", alpha=1/200) +
+                geom_point(x=func_max_temp_coord(x)[1], y=func_max_temp_coord(x)[2], size=4, color="red", alpha=1/200) +
+                scale_x_continuous("Time(s)", seq(0,420,60)) +
+                scale_y_continuous("Temperature(C)", limits=c(900,1400))
+}
+
 #create list of pyro_graphs + tableGrob, apply grid.arrange to list
 pyro_graphs_list <- Map(func_make_graph, mget(ign_names), ign_names)
 all_data_list_grob <- lapply(list(all_data), tableGrob)
@@ -239,13 +255,12 @@ grid.draw(textGrob(test_date, x=0.99, y=0.01, hjust=1, vjust=0.1))
 
 
 if (export_to_png == TRUE){
-#### Code to export plotted data to .png file
-png(filename=paste0(fname,".png"), width = pngw, height = pngh)
-pyro_graphs_list <- Map(func_make_graph, mget(ign_names), ign_names)
-all_data_list_grob <- lapply(list(all_data), tableGrob)
-all_graphs <- c(pyro_graphs_list, all_data_list_grob)
-do.call("grid.arrange", all_graphs)
-grid.draw(textGrob(test_date, x=0.99, y=0.01, hjust=1, vjust=0.1))
-dev.off()
+        #### Code to export plotted data to .png file
+        png(filename=paste0(fname,".png"), width = pngw, height = pngh)
+        pyro_graphs_list <- Map(func_make_graph, mget(ign_names), ign_names)
+        all_data_list_grob <- lapply(list(all_data), tableGrob)
+        all_graphs <- c(pyro_graphs_list, all_data_list_grob)
+        do.call("grid.arrange", all_graphs)
+        grid.draw(textGrob(test_date, x=0.99, y=0.01, hjust=1, vjust=0.1))
+        dev.off()
 }
-
