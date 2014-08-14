@@ -18,6 +18,9 @@ fname <- prefix
 options("digits.secs"=6, digits=6)
 
 ### Important function variables
+## ign_time_thresh requires lowering if receive error:
+    #Error in if (x[i] <= b && i > c) { : 
+    #missing value where TRUE/FALSE needed
 baseline_drop_thresh <- -25
 drop_time_thresh <- -25
 ign_time_thresh <- 20
