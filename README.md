@@ -51,13 +51,11 @@ If standard deviations are too high there may be a good reason to remove an outl
 #   round(removeRow(2),1)  # removes pyro2
 #   round(removeRow(3),1)  # removes pyro3
 ```
-This allows for easy highlighting and hitting *Cntrl+Enter* to quickly test how a result might change if one sample value is removed. If `pyro2` needs removal, for example, scroll down to the REMOVE ROW FUNCTION header, and uncomment the appropriate line of code:
+This allows for easy highlighting and hitting *Cntrl+Enter* to quickly test how a result might change if one sample value is removed. If `pyro2` needs removal, for example, scroll down to the OPTIONS section near the top and, reassign the appropriate variable, in this case `remove2` will need to be reassigned to `TRUE`:
 ```
-# Uncommenting lines will remove specified samples from data calculations
-#   does not allow for removal of more than 1 line
-# calculations.table.total <- round(removeRow(1),1)  # removes pyro1
-calculations.table.total <- round(removeRow(2),1)  # removes pyro2
-# calculations.table.total <- round(removeRow(3),1)  # removes pyro3
+remove1 <- FALSE
+remove2 <- TRUE
+remove3 <- FALSE # set to TRUE if removal desired
 ```
 Simply run the script again for an updated calculations table.
 
