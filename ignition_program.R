@@ -29,8 +29,16 @@ prefix       <- "2015-01-27,8F"  # filename 'prefix'
 setwd("C://Users//yue.GLOBAL//Documents//R//ignition")
 
 skip.lines <- 13  # default 11, 13 otherwise
+#   Needs tweaking if:
+#     Error in read.table(file = file, header = header, 
+#      sep = sep, quote = quote,  : more columns than column names
+
 read.rows  <- 830  # default 840, less if file missing lines
 exo.threshold <- 5  # default 10, low exo need around 5
+
+remove1 <- FALSE
+remove2 <- FALSE
+remove3 <- FALSE
 
 # ======================
 # IMPORT & PREPARE
@@ -238,13 +246,20 @@ removeRow <- function(x){
   return(calc.table.new)
 }
 
-# Uncommenting lines will remove specified samples from data calculations
+# Function call removes sample data from table based on conditional
 #   does not allow for removal of more than 1 line
 
-# calculations.table.total <- round(removeRow(1),1)  # removes pyro1
-# calculations.table.total <- round(removeRow(2),1)  # removes pyro2
-# calculations.table.total <- round(removeRow(3),1)  # removes pyro3
+if (remove1 == TRUE){
+  calculations.table.total <- round(removeRow(1),1)  # removes pyro1
+}
 
+if (remove2 == TRUE){
+  calculations.table.total <- round(removeRow(2),1)  # removes pyro2
+}
+
+if (remove3 == TRUE){
+  calculations.table.total <- round(removeRow(3),1)  # removes pyro3
+}
 # ======================
 # GRAPHIC SETTINGS
 # ===========================
