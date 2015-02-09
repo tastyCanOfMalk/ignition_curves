@@ -11,8 +11,8 @@ The critical points are named thusly:
 Are used in determining these calculated results:
  - **Time to ignition**
     - exoTime - dropTime
- - **Max burn temperature**
-    - Is simply the result of a max() function call
+ - **Max change in temperature**
+    - (delta temp) = maxTemp - baseline temp
  - **Duration of exothermic reaction**
     - exoDuration - exoTime
 
