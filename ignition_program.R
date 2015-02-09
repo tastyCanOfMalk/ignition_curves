@@ -11,9 +11,9 @@ if (require("reshape") == FALSE) install.packages("reshape")
 # FUNCTIONS & LIST CREATION
 # CREATE SUMMARY & CALCULATIONS TABLE
 # REMOVE ROW FUNCTION
-#   calculations.table.total <- round(removeRow(1),1)  # removes pyro1
-#   calculations.table.total <- round(removeRow(2),1)  # removes pyro2
-#   calculations.table.total <- round(removeRow(3),1)  # removes pyro3
+#   round(removeRow(1),1)  # removes pyro1
+#   round(removeRow(2),1)  # removes pyro2
+#   round(removeRow(3),1)  # removes pyro3
 # GRAPHIC SETTINGS
 # GRAPH CREATION
 # GRAPHIC OUTPUT
@@ -24,7 +24,7 @@ if (require("reshape") == FALSE) install.packages("reshape")
 # ======================
 # OPTIONS
 # ==========================
-prefix       <- "2015-01-27,8F"  # filename 'prefix'
+prefix       <- "2014-09-18,E"  # filename 'prefix'
 
 setwd("C://Users//yue.GLOBAL//Documents//R//ignition")
 
@@ -33,12 +33,12 @@ skip.lines <- 13  # default 11, 13 otherwise
 #     Error in read.table(file = file, header = header, 
 #      sep = sep, quote = quote,  : more columns than column names
 
-read.rows  <- 830  # default 840, less if file missing lines
+read.rows  <- 800  # default 840, less if file missing lines
 exo.threshold <- 5  # default 10, low exo need around 5
 
 remove1 <- FALSE
-remove2 <- FALSE
-remove3 <- FALSE
+remove2 <- TRUE
+remove3 <- FALSE # set to TRUE if removal desired
 
 # ======================
 # IMPORT & PREPARE
@@ -251,15 +251,19 @@ removeRow <- function(x){
 
 if (remove1 == TRUE){
   calculations.table.total <- round(removeRow(1),1)  # removes pyro1
+  prefix <- paste0(prefix, "-R1")  # for filename
 }
 
 if (remove2 == TRUE){
   calculations.table.total <- round(removeRow(2),1)  # removes pyro2
+  prefix <- paste0(prefix, "-R2")  # for filename
 }
 
 if (remove3 == TRUE){
   calculations.table.total <- round(removeRow(3),1)  # removes pyro3
+  prefix <- paste0(prefix, "-R3") # for filename
 }
+
 # ======================
 # GRAPHIC SETTINGS
 # ===========================
@@ -295,7 +299,7 @@ alpha.list <- list(.25,   #1 pyro values
 xy.scale.list <- list(0,    #1 x-axis min
                       420,  #2 x-axis max
                       30,   #3 x-axis scale/breaks
-                      900,  #4 y-axis min
+                      950,  #4 y-axis min
                       1400, #5 y-axis max
                       100,  #6 y-axis scale/breaks
                       0.5,  #7 x-axis vjust
@@ -525,7 +529,7 @@ p5 <- qplot(1:10, 1:10, geom = "blank") +
                                    h.even.alpha = 0.5))
 
 p6.sample.title <- c("Sample: ", 
-                  paste0(prefix,"1-3"),
+                  paste0(prefix),
                   "Report created: ", 
                   date())  # appears in last graph
 
@@ -573,7 +577,7 @@ multiplot(p1, p2, p3, p4, p5, p6, cols=2)
 # EXPORT FUNCTIONS
 # ===========================
 exportPdf <- function(){
-  file.name.pdf <- paste0(prefix, "1-3", ".pdf")
+  file.name.pdf <- paste0(prefix, ".pdf")
   pdf(file = file.name.pdf,
       width = 11,
       height = 8.5)
@@ -582,7 +586,7 @@ dev.off()
 }
 
 exportPng <- function(){
-  file.name.png <- paste0(prefix, "1-3", ".png")
+  file.name.png <- paste0(prefix, ".png")
   dev.copy(png, file = file.name.png,
            width = 1200,
            height = 900)
@@ -590,5 +594,11 @@ exportPng <- function(){
   dev.off()
 }
 
-
-
+exportEPS <- function(){
+  file.name.eps <- paste0(prefix, ".eps")
+  dev.copy(eps, file = file.name.png,
+           width = 1200,
+           height = 900)
+  multiplot(p1, p2, p3, p4, p5, p6, cols=2)
+  dev.off()
+}
