@@ -24,7 +24,7 @@ if (require("reshape") == FALSE) install.packages("reshape")
 # ======================
 # OPTIONS
 # ==========================
-prefix       <- "2014-09-18,E"  # filename 'prefix'
+prefix       <- "2015-01-27,8F"  # filename 'prefix'
 
 setwd("C://Users//yue.GLOBAL//Documents//R//ignition")
 
@@ -37,8 +37,9 @@ read.rows  <- 800  # default 840, less if file missing lines
 exo.threshold <- 5  # default 10, low exo need around 5
 
 remove1 <- FALSE
-remove2 <- TRUE
-remove3 <- FALSE # set to TRUE if removal desired
+remove2 <- FALSE
+remove3 <- FALSE  # set to TRUE if removal desired
+autosave <- TRUE  # automatically save as .png after running if TRUE
 
 # ======================
 # IMPORT & PREPARE
@@ -145,7 +146,8 @@ maxTemp <- function(x){
   #   list of values: max temp time(x3), max temp temp(y3)
   max.temp <- max(x)
   max.time <- match(max(x),x)/2
-  A <- list(max.time, max.temp)
+  delta.temp <- max.temp - dropTime(x)[[3]]
+  A <- list(max.time, max.temp, delta.temp)
   return(A)    
 }
 
@@ -154,7 +156,8 @@ max.temps.table <- setNames(do.call(rbind.data.frame,max.temps),
                             dimnames(max.temps)[[2]])
 rownames(max.temps.table) <- c("pyro1", "pyro2", "pyro3")
 colnames(max.temps.table) <- c("max.temp.time(x3)", 
-                               "max.temp(y3)")
+                               "max.temp(y3)",
+                               "delta.temp")
 
 exoDuration <- function(x){
   # Computes exotherm duration coordinates
@@ -191,12 +194,12 @@ summary.table <- cbind(drop.times.table,
                        exo.durations.table)  # all results in one table
 
 calculations.table <- cbind(exo.times.table[[1]] - drop.times.table[[1]],
-                            max.temps.table[[2]],
+                            round(max.temps.table[[3]], 0),
                             exo.durations.table[[1]] - exo.times.table[[1]])
 
 rownames(calculations.table) <- c("pyro1", "pyro2", "pyro3")
 colnames(calculations.table) <- c("ignite time", 
-                                   "max temp",
+                                   "delta temp",
                                    "exo duration")
 
 ign.time.mean     <- round(mean(calculations.table[1:3, 1]), 0)
@@ -300,7 +303,7 @@ xy.scale.list <- list(0,    #1 x-axis min
                       420,  #2 x-axis max
                       30,   #3 x-axis scale/breaks
                       950,  #4 y-axis min
-                      1400, #5 y-axis max
+                      max(summary.table[[7]])+30, #5 y-axis max
                       100,  #6 y-axis scale/breaks
                       0.5,  #7 x-axis vjust
                       1.0   #8 y-axis vjust
@@ -358,8 +361,8 @@ p1 <- ggplot(data = df.trim, aes(x = time, y  = pyro1)) +
              color = color.list[[5]], 
              size  = size.list[[2]], 
              alpha = alpha.list[[2]]) +
-  geom_point(x = summary.table[[1, 8]],  # exo duration x4
-             y = summary.table[[1, 9]],  # exo duration y4
+  geom_point(x = summary.table[[1, 9]],  # exo duration x4
+             y = summary.table[[1, 10]],  # exo duration y4
              color = color.list[[6]], 
              size  = size.list[[2]],
              alpha = alpha.list[[2]])
@@ -413,8 +416,8 @@ p2 <- ggplot(data = df.trim, aes(x = time, y  = pyro2)) +
              color = color.list[[5]], 
              size  = size.list[[2]], 
              alpha = alpha.list[[2]]) +
-  geom_point(x = summary.table[[2, 8]],  # exo duration x4
-             y = summary.table[[2, 9]],  # exo duration y4
+  geom_point(x = summary.table[[2, 9]],  # exo duration x4
+             y = summary.table[[2, 10]],  # exo duration y4
              color = color.list[[6]], 
              size  = size.list[[2]],
              alpha = alpha.list[[2]])
@@ -468,8 +471,8 @@ p3 <- ggplot(data = df.trim, aes(x = time, y  = pyro3)) +
              color = color.list[[5]], 
              size  = size.list[[2]], 
              alpha = alpha.list[[2]]) +
-  geom_point(x = summary.table[[3, 8]],  # exo duration x4
-             y = summary.table[[3, 9]],  # exo duration y4
+  geom_point(x = summary.table[[3, 9]],  # exo duration x4
+             y = summary.table[[3, 10]],  # exo duration y4
              color = color.list[[6]], 
              size  = size.list[[2]],
              alpha = alpha.list[[2]])
@@ -601,4 +604,8 @@ exportEPS <- function(){
            height = 900)
   multiplot(p1, p2, p3, p4, p5, p6, cols=2)
   dev.off()
+}
+
+if(autosave == TRUE) {
+  exportPng()
 }
